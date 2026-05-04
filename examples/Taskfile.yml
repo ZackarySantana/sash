@@ -1,0 +1,29 @@
+version: "3"
+
+vars:
+    SASH_CLI: "go run ../../cmd/sash"
+
+includes:
+    counter:
+        taskfile: counter/Taskfile.yml
+        dir: counter
+        vars:
+            SASH_CLI: "{{.SASH_CLI}}"
+    solidvite:
+        taskfile: solid-vite/Taskfile.yml
+        dir: solid-vite
+        vars:
+            SASH_CLI: "{{.SASH_CLI}}"
+
+tasks:
+    counter:
+        desc: List tasks for the counter example
+        dir: counter
+        cmds:
+            - task --list-all
+
+    solidvite:
+        desc: List tasks for the solid-vite example
+        dir: solid-vite
+        cmds:
+            - task --list-all

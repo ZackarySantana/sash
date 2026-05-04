@@ -1,0 +1,63 @@
+---
+sidebar_position: 2
+---
+
+# Getting started
+
+You can adopt Sash in two equally reasonable orders—pick whichever matches how you explore:
+
+1. **Clone an example**, run **`sash dev`**, tweak UI and Go, then read **`sash.json`** when you’re curious why it works.
+2. **Skim [`sash.json`](./configuration)** and **[CLI](./cli)** first—then copy **`examples/`** into your own repo when you’re ready to commit.
+
+Either way the goal is the same—you should be productive in minutes, not after writing a bespoke static server.
+
+## Prerequisites
+
+- **Go** (this repo targets a current module version; match or exceed **`go`** in the root **`go.mod`**).
+- **Bun** (or any package manager) for the Solid + Vite example and for building this docs site—the tool choice is yours; Sash only cares that **`frontend.*`** commands in **`sash.json`** succeed.
+
+## Install the CLI
+
+From a directory that contains **`go.mod`** (your app module):
+
+```bash
+go install github.com/zackarysantana/sash/cmd/sash@latest
+```
+
+Prefer not to install globally? **`go run`** is enough for day-one tries:
+
+```bash
+go run github.com/zackarysantana/sash/cmd/sash@latest version
+```
+
+## Use as a library
+
+Add the module to **`go.mod`**, then import the root package for **`sash.Run`** and **`sash.Options`**, or pull in **`sashrpc`** / **`sashsse`** directly if you only need the primitives.
+
+Why the root import exists—you get a thin, stable façade over **`runner.Run`** so your **`main`** stays a few dozen lines instead of importing half a dozen internal packages.
+
+## Project layout (typical)
+
+- **`sash.json`** — names the binary, points at the frontend folder, and lists the four shell commands Sash orchestrates—**plus** optional **`bindings`** when you want codegen.
+- **Go `main`** — **`embed`** for production assets; **`sash.Run(opts)`** with **`MountAPI`** (embedded) and **`DevAPIMount`** (split dev)—the same struct options cover both modes so you don’t fork **`main`** per environment.
+- **Frontend** — static files or a Vite-style app that imports **`bindings/`** after **`sash bind`**.
+
+Concrete trees and commands: **[Examples](./examples)**.
+
+## Build this documentation site
+
+From the repository root:
+
+```bash
+cd docs
+bun install
+bun start
+```
+
+Production static output:
+
+```bash
+bun run build
+```
+
+See the root **`Taskfile.yml`** for **`task docs:*`** shortcuts if you use [Task](https://taskfile.dev).

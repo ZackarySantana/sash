@@ -1,0 +1,25 @@
+{
+    "name": "solid-vite",
+    "goMain": ".",
+    "frontend": {
+        "dir": "web",
+        "install": "bun install",
+        "build": "bun run build",
+        "dev": "bun run dev"
+    },
+    "bindings": {
+        "apiImportPath": "github.com/zackarysantana/sash/examples/solid-vite/api",
+        "type": "API",
+        "goBindingsDir": "sashbindings",
+        "tsBindingsDir": "web/src/bindings",
+        "mountPath": "/api/sash",
+        "devListenAddr": "127.0.0.1:9350",
+        "devAPIBaseURL": "http://127.0.0.1:9350",
+        "sseEvents": [
+            {
+                "event": "tick",
+                "fields": { "sec": "number" }
+            }
+        ]
+    }
+}

@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+    install:
+        desc: Install docs dependencies (bun)
+        cmds:
+            - bun install
+
+    dev:
+        desc: Start Docusaurus dev server for docs/
+        cmds:
+            - bun start
+
+    build:
+        desc: Build static docs site to docs/build/
+        cmds:
+            - bun run build

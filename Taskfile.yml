@@ -1,0 +1,33 @@
+version: "3"
+
+includes:
+    docs:
+        taskfile: docs/Taskfile.yml
+        dir: docs
+    examples:
+        taskfile: examples/Taskfile.yml
+        dir: examples
+
+tasks:
+    default:
+        desc: List available tasks
+        cmds:
+            - task --list
+
+    test:
+        desc: Run go test for all packages
+        env:
+            GOFLAGS: -buildvcs=false
+        cmds:
+            - go test ./...
+
+    vet:
+        desc: Run go vet on all packages
+        cmds:
+            - go vet ./...
+
+    build:
+        desc: Build the sash CLI into ./bin/sash
+        cmds:
+            - mkdir -p bin
+            - go build -o bin/sash ./cmd/sash

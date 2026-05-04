@@ -1,0 +1,5 @@
+web/node_modules
+web/dist
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

@@ -1,0 +1,19 @@
+{
+    "name": "counter",
+    "goMain": ".",
+    "frontend": {
+        "dir": "web",
+        "install": "bun install",
+        "build": "true",
+        "dev": "bun dev.ts"
+    },
+    "bindings": {
+        "apiImportPath": "github.com/zackarysantana/sash/examples/counter/api",
+        "type": "API",
+        "goBindingsDir": "sashbindings",
+        "tsBindingsDir": "web/bindings",
+        "mountPath": "/api/sash",
+        "devListenAddr": "127.0.0.1:9349",
+        "devAPIBaseURL": "http://127.0.0.1:9349"
+    }
+}

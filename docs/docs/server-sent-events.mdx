@@ -1,0 +1,43 @@
+---
+sidebar_position: 7
+---
+
+# Server-sent events
+
+Sometimes **`fetch`** isn’t enough—you want the **server to push** (progress ticks, logs, presence). **SSE is a simple upgrade path**—one long-lived **`text/event-stream`** response, no custom WebSocket protocol in app code.
+
+**`sashsse`** gives you a tiny in-process **`Broker`**: subscribe in the browser, **`Publish`** / **`PublishJSON`** from Go.
+
+## Go
+
+```go
+broker := sashsse.NewBroker()
+// CORS wrapper when stream origin differs from the page—same story as RPC in dev:
+mux.Handle("/events", sashsse.WithCORS(broker))
+```
+
+**Why drop on slow readers?** Publishers shouldn’t block because one tab stopped reading—bounded per-subscriber buffers and **`select`** **`default`** mean **slow clients lose events** instead of freezing your whole app. That tradeoff favors interactive tools and demos; if you need durable logs, pair SSE with persistence.
+
+## Embedding vs dev
+
+Mount the stream **alongside RPC** so the browser’s URL story matches production:
+
+- **Embedded** — e.g. **`mux.Handle(EmbeddedMountPath+"/events", …)`** so UI and stream share the loopback origin.
+- **Dev** — mount **`/events`** on the **dev API** mux next to **`MountDevRoutes`**—the page still talks to **`devAPIBaseURL`**.
+
+## Generated TypeScript
+
+Declare **`bindings.sseEvents`** and **`sash bind`** emits typed **`listenJSON`** on **`createSashSSESession()`**—you get autocomplete on event names and fields instead of **`any`**.
+
+Example:
+
+```json
+"sseEvents": [
+  {
+    "event": "tick",
+    "fields": { "sec": "number" }
+  }
+]
+```
+
+Allowed field kinds: **`string`**, **`number`**, **`boolean`**, **`unknown`**.

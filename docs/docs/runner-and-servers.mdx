@@ -1,0 +1,42 @@
+---
+sidebar_position: 5
+---
+
+# Runner and servers
+
+The import path **`github.com/zackarysantana/sash`** aliases **`runner.Options`** and **`runner.Run`**—a small surface on purpose so **`main`** reads like English, not middleware soup.
+
+## `sash.Run(opts)`
+
+**Why block on SIGINT?** A CLI-started “open this URL in the browser” tool should stay in the foreground until you’re done—otherwise the process exits, the browser tab looks broken, and newcomers think the binary crashed.
+
+- Default: log the URL, optionally open the system browser, **wait for Ctrl+C**.
+- If **`opts.Runner`** is set, that implementation runs instead (**`StubRunner`** in tests avoids hanging on signals).
+- Sizing defaults—width **1024**, height **768**, title **`Sash`** when you pass zero or empty values.
+
+## Embedded production (`DevURL` empty)
+
+**Why this mode:** shipping one loopback binary with assets inside **`embed`** is the smallest story for “download, run, browser opens”—no separate static host, no CORS headaches for RPC on the **same origin**.
+
+Requires **`Options.Assets`** (**`http.FileSystem`**, usually from **`embed`**).
+
+1. Listen on **`127.0.0.1:0`** (ephemeral port).
+2. Build a **`ServeMux`**: call **`MountAPI(mux)`** first (RPC, SSE, whatever you register), then **`/`** → **`http.FileServer`** for the UI.
+
+RPC should live under **`mountPath`** from **`sash.json`**—**`MountEmbedded`** from generated bindings applies the right prefix.
+
+## Split dev (`DevURL` non-empty)
+
+**Why this mode:** Vite (and friends) already own **`import.meta`**, HMR, and the page origin—you don’t win by fighting them. Instead, open **`DevURL`** in the browser and run a **second** HTTP server for Go when **`DevAPIMount`** is set.
+
+1. **`DevAPIMount`** registers routes on **`DevAPIAddr`** or **`SASH_API_LISTEN`** (required when the env var isn’t set).
+2. **`sash.Run`** opens **`DevURL`**; generated clients point **`fetch`** at **`devAPIBaseURL`** during bundler dev.
+
+**`MountAPI`** is **not** used for static files in this mode—only **`DevAPIMount`** feeds the dev-only listener.
+
+## Environment
+
+| Variable              | Used by                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| **`SASH_DEV_URL`**    | Set by **`sash dev`**—copy into **`Options.DevURL`**.                                          |
+| **`SASH_API_LISTEN`** | Dev API bind address—**`sash dev`** sets it from **`bindings.devListenAddr`** when configured. |

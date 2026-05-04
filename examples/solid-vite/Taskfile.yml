@@ -1,0 +1,40 @@
+version: "3"
+
+vars:
+    BIN_NAME: solid-vite
+    SASH_CLI: "go run ../../cmd/sash"
+
+tasks:
+    default:
+        cmds:
+            - task --list-all
+
+    install:
+        cmds:
+            - task: web-install
+            - go mod download
+
+    web-install:
+        internal: true
+        dir: web
+        cmds:
+            - bun install
+
+    bind:
+        cmds:
+            - "{{.SASH_CLI}} bind -config sash.json"
+
+    build:
+        cmds:
+            - task: web-build
+            - mkdir -p ./bin && go build -o ./bin/{{.BIN_NAME}} .
+
+    web-build:
+        internal: true
+        dir: web
+        cmds:
+            - bun run build
+
+    dev:
+        cmds:
+            - "{{.SASH_CLI}} dev -config sash.json"

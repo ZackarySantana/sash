@@ -1,0 +1,66 @@
+---
+sidebar_position: 6
+---
+
+# RPC and generated bindings
+
+Hand-rolling HTTP between Go and TypeScript works—until someone renames a method, changes an argument order, or forgets **`Content-Type`**. **Bindings exist so the compiler and codegen argue with you before users do.**
+
+## Go: `sashrpc`
+
+**`sashrpc.Handler(recv)`** returns an **`http.Handler`** that dispatches **POST** by method name with a small JSON envelope:
+
+```json
+{ "args": [ ... ] }
+```
+
+Arguments decode like **`encoding/json`** into your parameter types—basics, structs, slices, arrays, maps with string keys, pointers, etc. (Unsupported types fail at **`sash bind`** time, not at 3 a.m. in prod.)
+
+Exported methods on **`*YourStruct`** use one of:
+
+- **`func (ctx context.Context, ...) error`**
+- **`func (ctx context.Context, ...) (T, error)`**
+
+Optional **`context.Context`** matters—generated TS forwards **`AbortSignal`** into **`fetch`**, so canceling work in the browser cancels **`ctx`** on the server.
+
+**`sashrpc.WithCORS`** wraps the handler because **dev splits origins**—the browser sends OPTIONS preflight; Sash answers **204** so **`fetch`** succeeds across ports.
+
+Generated **`sashbindings`** wraps **`WithCORS`** around the RPC handler so you don’t forget.
+
+## Bindings layout
+
+**`sash bind`** writes:
+
+- **`MountEmbedded(mux, recv)`** — RPC at **`{mountPath}/API/{Method}`** beside your embedded UI.
+- **`MountDevRoutes(mux, recv)`** — RPC at **`/API/{Method}`** on the dev API server.
+- **`EmbeddedMountPath`**, **`DevListenAddr`** — constants you shouldn’t paste from **`sash.json`** by hand anymore.
+
+## TypeScript client
+
+Generated modules export:
+
+- **`configureSashBindings({ apiBase })`** — escape hatch when hosting doesn’t match the auto rules.
+- **`devApiBaseURL`** — mirrors **`devAPIBaseURL`** from **`sash.json`**.
+- **`API`** — one **`async`** function per method; optional **`fetchOpts`** (e.g. **`signal`**).
+- **`eventsURL()`** — stays consistent with RPC base path rules for SSE.
+
+### Auto configuration (why `import` has side effects)
+
+On import the client **`await`**s a short initializer (**top-level await**):
+
+1. No **`location`** (SSR-ish): skip—you’ll set **`apiBase`** yourself if needed.
+2. **`apiBase` already set**: respect it—**`configureSashBindings`** wins.
+3. **`import.meta.env.DEV === true`** (Vite): force **`devApiBaseURL`**—**`OPTIONS`** probes on the Vite origin lie too often (same-origin confusion).
+4. Otherwise: **`OPTIONS`** on **`{mountPath}/API/{firstMethod}`**—if **`ok`**, stay same-origin (embedded binary); else fall back to **`devApiBaseURL`**.
+
+Bundlers need to allow **top-level await** in the bindings module—Vite and current browsers handle it.
+
+### Manual override
+
+```typescript
+import { configureSashBindings, devApiBaseURL } from "./bindings";
+
+configureSashBindings({ apiBase: devApiBaseURL });
+```
+
+Reach for this when your deploy layout doesn’t match “Vite dev vs embedded prod.”
