@@ -1,0 +1,49 @@
+name: Deploy docs
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - "docs/**"
+            - ".github/workflows/deploy-docs.yml"
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: pages
+    cancel-in-progress: false
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: "1.3.13"
+
+            - name: Install & build Docusaurus
+              working-directory: docs
+              env:
+                  DOCUSAURUS_URL: https://${{ github.repository_owner }}.github.io
+                  DOCUSAURUS_BASE_URL: /${{ github.event.repository.name }}/
+              run: bun install --frozen-lockfile && bun run build
+
+            - uses: actions/upload-pages-artifact@v3
+              with:
+                  path: docs/build
+
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - id: deployment
+              uses: actions/deploy-pages@v4

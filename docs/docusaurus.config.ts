@@ -2,6 +2,17 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
+/** GitHub Pages project sites need a path prefix; CI sets DOCUSAURUS_BASE_URL (e.g. `/sash/`). */
+function normalizeBaseUrl(raw: string | undefined): string {
+    const s = raw?.trim() || "/";
+    if (s === "/") return "/";
+    const lead = s.startsWith("/") ? s : `/${s}`;
+    return lead.endsWith("/") ? lead : `${lead}/`;
+}
+
+const url = process.env.DOCUSAURUS_URL ?? "https://example.com";
+const baseUrl = normalizeBaseUrl(process.env.DOCUSAURUS_BASE_URL);
+
 const config: Config = {
     title: "Sash",
     tagline:
@@ -12,8 +23,8 @@ const config: Config = {
         v4: true,
     },
 
-    url: "https://example.com",
-    baseUrl: "/",
+    url,
+    baseUrl,
 
     organizationName: "zackarysantana",
     projectName: "sash",
