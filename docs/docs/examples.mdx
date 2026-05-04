@@ -4,30 +4,30 @@ sidebar_position: 8
 
 # Examples
 
-The repo ships **two runnable apps** on purpose—one stays **boringly small** so you can see the whole pipe in an afternoon; the other shows **what a real bundler stack** (Solid + Vite + Tailwind) looks like with **SSE** and a richer UI. **Start with whichever matches how you build frontends today**—both exercise the same **`sash.json` → bind → Run** loop.
+The repo ships **two runnable apps** on purpose: one stays **boringly small** so you can see the whole pipe in an afternoon; the other shows **what a real bundler stack** (Solid + Vite + Tailwind) looks like with **SSE** and a richer UI. **Start with whichever matches how you build frontends today**; both exercise the same **`sash.json` → bind → Run** loop.
 
 ## How to explore (from repo root)
 
 Sash doesn’t hide behind a monorepo-only workflow. From **`/sash`**:
 
-- **Discover example tasks:** `task examples:counter` or `task examples:solidvite` — prints that example’s **`task --list-all`** (install, dev, build, bind).
+- **Discover example tasks:** `task examples:counter` or `task examples:solidvite` prints that example’s **`task --list-all`** (install, dev, build, bind).
 - **Run one example’s dev stack:** `task examples:counter:dev` / `task examples:solidvite:dev` (or `cd examples/<name>` and `task dev`).
-- **Refresh bindings everywhere:** `task bind` — runs **`sash bind`** in **counter** then **solid-vite** using their **`sash.json`** files.
+- **Refresh bindings everywhere:** `task bind` runs **`sash bind`** in **counter** then **solid-vite** using their **`sash.json`** files.
 
-That’s the **ease pitch**—you type a few **`task`** names (or **`sash`** directly inside each folder) instead of memorizing ports and **`go run`** paths.
+That’s the **ease pitch**: you type a few **`task`** names (or **`sash`** directly inside each folder) instead of memorizing ports and **`go run`** paths.
 
 ---
 
-## `counter` — minimal surface area
+## `counter`: minimal surface area
 
-**Why it exists:** prove the loop—**Go `embed`**, generated **`web/bindings`**, **`sashrpc`**, **`sash dev` / `build`**—without a framework’s moving parts.
+**Why it exists:** prove the loop (**Go `embed`**, generated **`web/bindings`**, **`sashrpc`**, **`sash dev` / `build`**) without a framework’s moving parts.
 
-|                |                                                                                                     |
-| -------------- | --------------------------------------------------------------------------------------------------- |
-| **UI**         | Plain HTML + ES modules under **`examples/counter/web/`**                                           |
-| **Dev server** | Bun (**`web/dev.ts`**) serves **`index.html`** on **`PORT`** from **`sash dev`**.                   |
-| **RPC**        | Counter state: **`Get`**, **`Add`**—no SSE.                                                         |
-| **Prod**       | **`go embed web/*`** — static files only; **`frontend.build`** is effectively a no-op (**`true`**). |
+|                |                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------- |
+| **UI**         | Plain HTML + ES modules under **`examples/counter/web/`**                                          |
+| **Dev server** | Bun (**`web/dev.ts`**) serves **`index.html`** on **`PORT`** from **`sash dev`**.                  |
+| **RPC**        | Counter state: **`Get`**, **`Add`** (no SSE).                                                      |
+| **Prod**       | **`go embed web/*`**: static files only; **`frontend.build`** is effectively a no-op (**`true`**). |
 
 **What you learn**
 
@@ -37,38 +37,38 @@ That’s the **ease pitch**—you type a few **`task`** names (or **`sash`** dir
 
 **Key paths**
 
-- **`examples/counter/main.go`** — **`embed`**, **`sash.Run`**, **`sashbindings`**
-- **`examples/counter/api/api.go`** — RPC methods
-- **`examples/counter/web/index.html`** — UI that imports **`./bindings/index.js`**
-- **`examples/counter/sash.json`** — config the CLI reads
+- **`examples/counter/main.go`**: **`embed`**, **`sash.Run`**, **`sashbindings`**
+- **`examples/counter/api/api.go`**: RPC methods
+- **`examples/counter/web/index.html`**: UI that imports **`./bindings/index.js`**
+- **`examples/counter/sash.json`**: config the CLI reads
 
 ---
 
-## `solid-vite` — closer to “real” product UI
+## `solid-vite`: closer to “real” product UI
 
-**Why it exists:** most teams ship **Vite-class** tooling—TypeScript, components, Tailwind. This example shows **HMR plus Go** without you reverse-engineering **`SASH_DEV_URL`**, **`SASH_API_LISTEN`**, or **`import.meta.env.DEV`** wiring; **generated bindings already account for split origins**.
+**Why it exists:** most teams ship **Vite-class** tooling (TypeScript, components, Tailwind). This example shows **HMR plus Go** without you reverse-engineering **`SASH_DEV_URL`**, **`SASH_API_LISTEN`**, or **`import.meta.env.DEV`** wiring; **generated bindings already account for split origins**.
 
-|          |                                                                                         |
-| -------- | --------------------------------------------------------------------------------------- |
-| **UI**   | **SolidJS** + **Vite** + **Tailwind** under **`web/`**                                  |
-| **Dev**  | Vite dev server; Go API on **`devListenAddr`** (see **`sash.json`**).                   |
-| **RPC**  | **`Message`**, **`WaitFiveSeconds`** — demo payload + slow call + **`context` cancel**. |
-| **SSE**  | **`tick`** events during the long call—see **`sseEvents`** in **`sash.json`**.          |
-| **Prod** | **`embed all:web/dist`** after **`bun run build`**.                                     |
+|          |                                                                                        |
+| -------- | -------------------------------------------------------------------------------------- |
+| **UI**   | **SolidJS** + **Vite** + **Tailwind** under **`web/`**                                 |
+| **Dev**  | Vite dev server; Go API on **`devListenAddr`** (see **`sash.json`**).                  |
+| **RPC**  | **`Message`**, **`WaitFiveSeconds`**: demo payload + slow call + **`context` cancel**. |
+| **SSE**  | **`tick`** events during the long call (see **`sseEvents`** in **`sash.json`**).       |
+| **Prod** | **`embed all:web/dist`** after **`bun run build`**.                                    |
 
 **What you learn**
 
 - End-to-end **`sash bind`** into **`web/src/bindings`** (TS + JS + **`.d.ts`**).
 - **`createSashSSESession`** + typed **`listenJSON`** from **`sseEvents`**.
-- A UI that stresses **latency display** and **abort** semantics—useful patterns for internal tools.
+- A UI that stresses **latency display** and **abort** semantics (useful patterns for internal tools).
 
 **Key paths**
 
-- **`examples/solid-vite/main.go`** — **`embed web/dist`**, broker + **`MountEmbedded`**, **`/events`** routes
-- **`examples/solid-vite/api/api.go`** — handlers + SSE **`PublishJSON`**
-- **`examples/solid-vite/web/src/App.tsx`** — RPC + SSE demo UI
-- **`examples/solid-vite/vite.config.ts`** — listens on **`127.0.0.1`** + **`PORT`**
-- **`examples/solid-vite/sash.json`** — bindings + **`sseEvents`**
+- **`examples/solid-vite/main.go`**: **`embed web/dist`**, broker + **`MountEmbedded`**, **`/events`** routes
+- **`examples/solid-vite/api/api.go`**: handlers + SSE **`PublishJSON`**
+- **`examples/solid-vite/web/src/App.tsx`**: RPC + SSE demo UI
+- **`examples/solid-vite/vite.config.ts`**: listens on **`127.0.0.1`** + **`PORT`**
+- **`examples/solid-vite/sash.json`**: bindings + **`sseEvents`**
 
 ---
 
@@ -79,4 +79,4 @@ That’s the **ease pitch**—you type a few **`task`** names (or **`sash`** dir
 | You want to read **`main.go`** and the whole **`web/`** tree in one sitting | You already live in **`tsx`** / **`vite`** land                |
 | You’re validating **`sashrpc`** + **`bind`** without framework noise        | You want **SSE**, Tailwind layout, and **`AbortSignal`** demos |
 
-Either path gets you to **“browser talks to Go”** quickly—that’s the bar Sash is trying to clear.
+Either path gets you to **“browser talks to Go”** quickly; that’s the bar Sash is trying to clear.

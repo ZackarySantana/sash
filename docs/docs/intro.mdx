@@ -4,18 +4,18 @@ sidebar_position: 1
 
 # Sash
 
-Shipping a **Go app with a browser UI** usually means reinventing the same glue—embedding static files, exposing an HTTP API your frontend can call, juggling **two origins** in dev (Vite vs API), and keeping TypeScript in sync with Go. That glue isn’t your product—it’s friction.
+Shipping a **Go app with a browser UI** usually means reinventing the same glue: embedding static files, exposing an HTTP API your frontend can call, juggling **two origins** in dev (Vite vs API), and keeping TypeScript in sync with Go. That glue isn’t your product; it’s friction.
 
 **Sash exists to remove that friction.** One small toolkit gives you:
 
-- **One binary** that can embed your UI, open loopback in the browser, and stay alive until you Ctrl+C—without bolting on a heavyweight desktop framework.
-- **A CLI** driven by **`sash.json`** so `install`, `build`, `dev`, and optional codegen read from the same place—no tribal knowledge in README scripts.
+- **One binary** that can embed your UI, open loopback in the browser, and stay alive until you Ctrl+C, without bolting on a heavyweight desktop framework.
+- **A CLI** driven by **`sash.json`** so `install`, `build`, `dev`, and optional codegen read from the same place; no tribal knowledge in README scripts.
 - **Generated TypeScript bindings** so your UI calls Go through typed **`fetch`** instead of hand-maintained URLs and payloads.
 
-Three pieces work together—and each solves a concrete annoyance:
+Three pieces work together, and each solves a concrete annoyance:
 
-1. **`sash` CLI** — **`dev`** wires your frontend command + **`go run`** with **`SASH_DEV_URL`** (and **`SASH_API_LISTEN`** when you split the API); **`build`** runs your frontend build then **`go build`**; **`bind`** regenerates Go + TS stubs from your API package.
-2. **`github.com/zackarysantana/sash`** — **`sash.Run`** chooses **embedded UI + API on one loopback server** vs **split dev** when **`SASH_DEV_URL`** is set—because bundlers insist on their own origin while your RPC needs a stable API base.
-3. **`sash bind`** — emits **`API`** helpers and mount functions so you stop copying **`mountPath`** strings between Go and TS.
+1. **`sash` CLI**: **`dev`** wires your frontend command + **`go run`** with **`SASH_DEV_URL`** (and **`SASH_API_LISTEN`** when you split the API); **`build`** runs your frontend build then **`go build`**; **`bind`** regenerates Go + TS stubs from your API package.
+2. **`github.com/zackarysantana/sash`**: **`sash.Run`** chooses **embedded UI + API on one loopback server** vs **split dev** when **`SASH_DEV_URL`** is set, because bundlers insist on their own origin while your RPC needs a stable API base.
+3. **`sash bind`**: emits **`API`** helpers and mount functions so you stop copying **`mountPath`** strings between Go and TS.
 
-Library code lives under **`src/`** (`runner`, `sashrpc`, `sashsse`, `bindgen`, `cli`). If you learn faster by reading code paths than prose, start with **[Examples](./examples)**—two runnable apps that stay deliberately small.
+Library code lives under **`src/`** (`runner`, `sashrpc`, `sashsse`, `bindgen`, `cli`). If you learn faster by reading code paths than prose, start with **[Examples](./examples)** (two runnable apps that stay deliberately small).

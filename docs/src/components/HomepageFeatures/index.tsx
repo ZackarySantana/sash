@@ -15,7 +15,7 @@ const FeatureList: FeatureItem[] = [
         Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
         description: (
             <>
-                <strong>sash.json</strong> holds your frontend scripts—so{" "}
+                <strong>sash.json</strong> holds your frontend scripts, so{" "}
                 <strong>sash dev</strong>, <strong>sash build</strong>, and{" "}
                 <strong>sash bind</strong> stay aligned without copy-pasted
                 shell snippets. Fewer moving parts means fewer “works on my
@@ -28,20 +28,20 @@ const FeatureList: FeatureItem[] = [
         Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
         description: (
             <>
-                Write methods on a struct—<strong>sash bind</strong> turns them
+                Write methods on a struct; <strong>sash bind</strong> turns them
                 into typed TypeScript calls and Go mount helpers. You spend time
                 on behavior, not hand-maintained URLs and JSON envelopes.
             </>
         ),
     },
     {
-        title: "Embedded UI—or split dev when you need HMR",
+        title: "Embedded UI, or split dev when you need HMR",
         Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
         description: (
             <>
-                Ship assets inside the binary for a single-loopback story—or let{" "}
-                <strong>sash dev</strong> open Vite while Go listens on its own
-                port. Bindings notice <strong>Vite dev</strong> vs{" "}
+                Ship assets inside the binary for a single-loopback story, or
+                let <strong>sash dev</strong> open Vite while Go listens on its
+                own port. Bindings notice <strong>Vite dev</strong> vs{" "}
                 <strong>embedded prod</strong> so you rarely configure{" "}
                 <code>apiBase</code> by hand.
             </>

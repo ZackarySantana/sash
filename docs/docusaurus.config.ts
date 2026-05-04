@@ -16,7 +16,7 @@ const baseUrl = normalizeBaseUrl(process.env.DOCUSAURUS_BASE_URL);
 const config: Config = {
     title: "Sash",
     tagline:
-        "Ship a Go-powered browser UI without rewriting the same glue—one config file, typed RPC, optional SSE.",
+        "Ship a Go-powered browser UI without rewriting the same glue: one config file, typed RPC, optional SSE.",
     favicon: "img/favicon.ico",
 
     future: {

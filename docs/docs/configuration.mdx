@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # `sash.json`
 
-**Why one file?** Your shell commands, binary name, Go entrypoint, and bindgen paths drift apart the moment they live in three different README sections. **`sash.json`** is the contract the CLI reads—so **`sash dev`** and **`sash build`** always agree on where the frontend lives and how to invoke it.
+**Why one file?** Your shell commands, binary name, Go entrypoint, and bindgen paths drift apart the moment they live in three different README sections. **`sash.json`** is the contract the CLI reads, so **`sash dev`** and **`sash build`** always agree on where the frontend lives and how to invoke it.
 
 Configuration defaults to **`sash.json`** beside **`go.mod`**. Override with **`sash -config path …`**.
 
@@ -15,33 +15,33 @@ Configuration defaults to **`sash.json`** beside **`go.mod`**. Override with **`
 | **`name`**     | Output binary filename for **`sash build`** (written under **`bin/`**). |
 | **`goMain`**   | Package path passed to **`go run`** / **`go build`** (often **`"."`**). |
 | **`frontend`** | Install, build, dev commands and paths (see below).                     |
-| **`bindings`** | Optional—when present, **`sash bind`** knows where to write codegen.    |
+| **`bindings`** | Optional; when present, **`sash bind`** knows where to write codegen.   |
 
 ## `frontend`
 
-| Field              | Meaning                                                                                                                                                              |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`dir`**          | Frontend root relative to **`sash.json`**.                                                                                                                           |
-| **`install`**      | Shell command run before release builds—typically **`npm install`** / **`bun install`**.                                                                             |
-| **`build`**        | Command that emits assets **`embed`** will ship—often **`vite build`**.                                                                                              |
-| **`dev`**          | Command **`sash dev`** starts—the server that owns **`PORT`** from the CLI.                                                                                          |
-| **`devServerURL`** | Pin the UI origin (including port)—useful when your tooling assumes a fixed URL (e.g. **`http://127.0.0.1:5173`**). Leave empty and Sash picks a free loopback port. |
-| **`devPort`**      | When **`devServerURL`** is empty, force a specific port instead of ephemeral—handy for bookmarks.                                                                    |
+| Field              | Meaning                                                                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`dir`**          | Frontend root relative to **`sash.json`**.                                                                                                                            |
+| **`install`**      | Shell command run before release builds; typically **`npm install`** / **`bun install`**.                                                                             |
+| **`build`**        | Command that emits assets **`embed`** will ship; often **`vite build`**.                                                                                              |
+| **`dev`**          | Command **`sash dev`** starts: the server that owns **`PORT`** from the CLI.                                                                                          |
+| **`devServerURL`** | Pin the UI origin (including port); useful when your tooling assumes a fixed URL (e.g. **`http://127.0.0.1:5173`**). Leave empty and Sash picks a free loopback port. |
+| **`devPort`**      | When **`devServerURL`** is empty, force a specific port instead of ephemeral; handy for bookmarks.                                                                    |
 
 ## `bindings`
 
 Present only when you want **`sash bind`**. Paths are relative to **`sash.json`**.
 
-| Field               | Meaning                                                                                                                                       |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`apiImportPath`** | Go import path of the package that declares **`type`**.                                                                                       |
-| **`type`**          | Exported struct name—methods on **`*Type`** become RPC endpoints.                                                                             |
-| **`goBindingsDir`** | Where **`bindings_gen.go`** lands (**`package sashbindings`**).                                                                               |
-| **`tsBindingsDir`** | Where **`index.js`** and **`index.d.ts`** land for your bundler.                                                                              |
-| **`mountPath`**     | URL prefix for RPC when UI and API share one server (e.g. **`/api/sash`**). Must start with **`/`**.                                          |
-| **`devListenAddr`** | TCP address for the standalone dev API—**`sash dev`** exports it as **`SASH_API_LISTEN`** so **`main`** can listen without hard-coding ports. |
-| **`devAPIBaseURL`** | Origin baked into generated TS as **`devApiBaseURL`**—the browser uses it when the UI and API are split.                                      |
-| **`sseEvents`**     | Optional—describe SSE JSON payloads for stronger generated types (see [Server-sent events](./server-sent-events)).                            |
+| Field               | Meaning                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`apiImportPath`** | Go import path of the package that declares **`type`**.                                                                                        |
+| **`type`**          | Exported struct name; methods on **`*Type`** become RPC endpoints.                                                                             |
+| **`goBindingsDir`** | Where **`bindings_gen.go`** lands (**`package sashbindings`**).                                                                                |
+| **`tsBindingsDir`** | Where **`index.js`** and **`index.d.ts`** land for your bundler.                                                                               |
+| **`mountPath`**     | URL prefix for RPC when UI and API share one server (e.g. **`/api/sash`**). Must start with **`/`**.                                           |
+| **`devListenAddr`** | TCP address for the standalone dev API; **`sash dev`** exports it as **`SASH_API_LISTEN`** so **`main`** can listen without hard-coding ports. |
+| **`devAPIBaseURL`** | Origin baked into generated TS as **`devApiBaseURL`**; the browser uses it when the UI and API are split.                                      |
+| **`sseEvents`**     | Optional; describe SSE JSON payloads for stronger generated types (see [Server-sent events](./server-sent-events)).                            |
 
 ### Example (Solid + Vite style)
 

@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # CLI
 
-The **`sash`** binary is intentionally small—**three verbs** cover the daily loop (plus **`version`**). That’s deliberate: you shouldn’t need a subcommand cheat sheet taped to your monitor.
+The **`sash`** binary is intentionally small: **three verbs** cover the daily loop (plus **`version`**). That’s deliberate: you shouldn’t need a subcommand cheat sheet taped to your monitor.
 
 ```text
 sash [-config path] [-tags list] <dev|build|bind|version>
@@ -27,16 +27,16 @@ Roughly:
 4. Run **`go run`** for **`goMain`** with **`SASH_DEV_URL`** set to the frontend origin.
 5. If **`bindings.devListenAddr`** is set, also set **`SASH_API_LISTEN`** so your process can bind the dev API without editing code.
 
-Your **`main`** should pass **`os.Getenv("SASH_DEV_URL")`** into **`Options.DevURL`**—that’s what flips **`sash.Run`** from “serve embedded files” to “open Vite (or Bun) and speak to **`DevAPIMount`**."
+Your **`main`** should pass **`os.Getenv("SASH_DEV_URL")`** into **`Options.DevURL`**; that’s what flips **`sash.Run`** from “serve embedded files” to “open Vite (or Bun) and speak to **`DevAPIMount`**."
 
 ## `sash build`
 
-**Why it exists:** release builds must run **your** frontend compiler, then **`go build`**, with the same tags you use locally. **`sash build`** runs **`frontend.install`**, **`frontend.build`**, then **`go build -o bin/<name>`**—one command from CI or your laptop.
+**Why it exists:** release builds must run **your** frontend compiler, then **`go build`**, with the same tags you use locally. **`sash build`** runs **`frontend.install`**, **`frontend.build`**, then **`go build -o bin/<name>`**, one command from CI or your laptop.
 
 ## `sash bind`
 
-**Why it exists:** hand-written **`fetch`** URLs and JSON bodies diverge from Go the first time someone renames a method. **`sash bind`** regenerates **`bindings_gen.go`** and **`index.js` / `index.d.ts`** from **`x/tools/go/packages`**—run it after signature changes.
+**Why it exists:** hand-written **`fetch`** URLs and JSON bodies diverge from Go the first time someone renames a method. **`sash bind`** regenerates **`bindings_gen.go`** and **`index.js` / `index.d.ts`** from **`x/tools/go/packages`**. Run it after signature changes.
 
 ## `sash version`
 
-Prints the CLI string (e.g. **`sash 0.1.0`**)—quick sanity check after **`go install`**.
+Prints the CLI string (e.g. **`sash 0.1.0`**), quick sanity check after **`go install`**.
